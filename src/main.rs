@@ -19,10 +19,12 @@ fn main() {
 
     println!("Args are send to :{} and receive from :{}", send_to_port, recv_from_port);
 
-    let src_ip_string = format!("{}:{}", "127.0.0.42", recv_from_port);
+    //let src_ip_string = format!("{}:{}", "127.0.0.42", recv_from_port);
+    let src_ip_string = recv_from_port;
     let src_socket = UdpSocket::bind(&src_ip_string).expect("Couldn't bind to adress");
     let clonned_src_socket = src_socket.try_clone().expect("cannot clone");
-    let dst_ip_string = format!("{}:{}", "127.0.0.42", send_to_port);
+    //let dst_ip_string = format!("{}:{}", "127.0.0.42", send_to_port);
+    let dst_ip_string =  send_to_port;
 
     let handle = thread::spawn( move || {
         // code to receive and show 
