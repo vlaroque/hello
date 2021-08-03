@@ -6,6 +6,15 @@ use std::str;
 use std::thread;
 use std::time::Duration;
 
+fn trim_newline(str: &mut String) {
+    if str.ends_with('\n') {
+        str.pop();
+        if str.ends_with('\r') {
+            str.pop();
+        }
+    }
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let send_to_port = match args.get(1) {
@@ -26,9 +35,9 @@ fn main() {
     //let dst_ip_string = format!("{}:{}", "127.0.0.42", send_to_port);
     let dst_ip_string =  send_to_port;
 
-    let handle = thread::spawn( move || {
+    let _handle = thread::spawn( move || {
         // code to receive and show 
-        for i in 1..10 {
+        for i in 3..0 {
             println!("i = {}", i);
             thread::sleep(Duration::from_millis(10));
         }
@@ -36,8 +45,9 @@ fn main() {
         loop {
             let mut received_buff = vec![0; 100];
             let (n, src_adress) = clonned_src_socket.recv_from(&mut received_buff).expect("nothing received");
-            let resp_str = str::from_utf8(&received_buff[0..n]);
-            println!("from {}[{}]=>{}", src_adress, n, resp_str.unwrap());
+            let mut resp_str = String::from_utf8(received_buff).unwrap();
+            trim_newline(&mut resp_str);
+            println!("from {}[{}]=>{}", src_adress, n, resp_str);
         }
     });
 
@@ -47,6 +57,7 @@ fn main() {
             .read_line(&mut msg_to_send)
             .expect("Failed to read line");
         let end_msg = String::from("bye\n");
+        trim_newline(&mut msg_to_send);
         if msg_to_send.eq(&end_msg) {
             println!("exits");
             return;
